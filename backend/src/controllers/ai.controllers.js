@@ -40,14 +40,11 @@ export const contextLoaderByText = async (req, res) => {
 
   const collectionName = `${Date.now()} text`;
 
-  const vectorStore = await QdrantVectorStore.fromExistingCollection(
-    embeddings,
-    {
-      url: process.env.QDRANT_URL,
-      apiKey: process.env.QDRANT_API_KEY,
-      collectionName: `${collectionName}`,
-    }
-  );
+  const vectorStore = await QdrantVectorStore.fromDocuments(docs, embeddings, {
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
+    collectionName,
+  });
 
   res.status(200).json({
     message: "text uploaded successfully",
@@ -76,14 +73,11 @@ export const contextLoaderByFile = async (req, res) => {
     model: "text-embedding-3-large",
   });
   const collectionName = `$${file.originalname}`;
-  const vectorStore = await QdrantVectorStore.fromExistingCollection(
-    embeddings,
-    {
-      url: process.env.QDRANT_URL,
-      apiKey: process.env.QDRANT_API_KEY,
-      collectionName: `${collectionName}`,
-    }
-  );
+  const vectorStore = await QdrantVectorStore.fromDocuments(docs, embeddings, {
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
+    collectionName,
+  });
 
  
 
@@ -137,12 +131,13 @@ export const contextLoaderByWebsite = async (req, res) => {
 
     
 
-    const vectorStore = await QdrantVectorStore.fromExistingCollection(docs,
+    const vectorStore = await QdrantVectorStore.fromDocuments(
+      docs,
       embeddings,
       {
         url: process.env.QDRANT_URL,
         apiKey: process.env.QDRANT_API_KEY,
-        collectionName: `${collectionName}`,
+        collectionName,
       }
     );
 
@@ -185,7 +180,7 @@ export const chat = async (req, res) => {
   
   
   const response = await client.chat.completions.create({
-    model: "gtp-3.5-turbo",
+    model: "gpt-3.5-turbo",
     messages: message
     
   });
