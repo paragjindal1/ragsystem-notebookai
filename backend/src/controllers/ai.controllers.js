@@ -32,7 +32,7 @@ export const contextLoaderByText = async (req, res) => {
 
   const docs = await textSplitter.splitDocuments(document);
   
-  console.log(docs);
+
 
   const embeddings = new OpenAIEmbeddings({
     model: "text-embedding-3-large",
@@ -40,10 +40,14 @@ export const contextLoaderByText = async (req, res) => {
 
   const collectionName = `${Date.now()} text`;
 
-  const vectorStore = await QdrantVectorStore.fromDocuments(docs, embeddings, {
-    url: "http://localhost:6333/",
-    collectionName: collectionName,
-  });
+  const vectorStore = await QdrantVectorStore.fromExistingCollection(
+    embeddings,
+    {
+      url: process.env.QDRANT_URL,
+      apiKey: process.env.QDRANT_API_KEY,
+      collectionName: `${collectionName}`,
+    }
+  );
 
   res.status(200).json({
     message: "text uploaded successfully",
@@ -57,7 +61,7 @@ export const contextLoaderByText = async (req, res) => {
 export const contextLoaderByFile = async (req, res) => {
   const file = req.file;
 
-  console.log(file)
+  
 
   
 
@@ -72,12 +76,16 @@ export const contextLoaderByFile = async (req, res) => {
     model: "text-embedding-3-large",
   });
   const collectionName = `$${file.originalname}`;
-  const vectorStore = await QdrantVectorStore.fromDocuments(docs, embeddings, {
-    url: "http://localhost:6333/",
-    collectionName: collectionName,
-  });
+  const vectorStore = await QdrantVectorStore.fromExistingCollection(
+    embeddings,
+    {
+      url: process.env.QDRANT_URL,
+      apiKey: process.env.QDRANT_API_KEY,
+      collectionName: `${collectionName}`,
+    }
+  );
 
-  console.log(file);
+ 
 
 
 
@@ -90,7 +98,7 @@ export const contextLoaderByWebsite = async (req, res) => {
 
     const{url}= req.body;
 
-    console.log(url)
+    
 
     // const loader = new FireCrawlLoader({
     //   url: url,  
@@ -120,9 +128,6 @@ export const contextLoaderByWebsite = async (req, res) => {
     });
     const docs = await textSplitter.splitDocuments(documents);
 
-    console.log(docs);
-
-    
 
     const embeddings = new OpenAIEmbeddings({
       model: "text-embedding-3-large",
@@ -132,12 +137,12 @@ export const contextLoaderByWebsite = async (req, res) => {
 
     
 
-    const vectorStore = await QdrantVectorStore.fromDocuments(
-      docs,
+    const vectorStore = await QdrantVectorStore.fromExistingCollection(docs,
       embeddings,
       {
-        url: "http://localhost:6333/",
-        collectionName: collectionName,
+        url: process.env.QDRANT_URL,
+        apiKey: process.env.QDRANT_API_KEY,
+        collectionName: `${collectionName}`,
       }
     );
 
@@ -155,7 +160,8 @@ export const chat = async (req, res) => {
   });
 
   const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings,{
-    url: "http://localhost:6333/",
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
     collectionName: `${collectionName}`,
   });
 
@@ -176,11 +182,10 @@ export const chat = async (req, res) => {
     ...messages
   ];
 
-  console.log(message)
   
   
   const response = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gtp-3.5-turbo",
     messages: message
     
   });
