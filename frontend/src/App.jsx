@@ -517,7 +517,7 @@ const App = () => {
                       <Upload size={48} className="text-gray-400 mb-4" />
                       <p className="text-gray-300 mb-2">Click to upload file</p>
                       <p className="text-gray-500 text-sm">
-                        Supports: TXT, PDF, DOC, DOCX, MD
+                        Support:PDF only
                       </p>
                     </label>
                   </div>
